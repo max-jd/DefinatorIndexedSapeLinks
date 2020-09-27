@@ -4,10 +4,9 @@ package com.gmailAtpavlinichm.maxim.search.analyze;
 import com.gmailAtpavlinichm.maxim.search.engine.GoogleSearchEngine;
 import com.gmailAtpavlinichm.maxim.search.engine.SearchEngine;
 import com.gmailAtpavlinichm.maxim.search.text.EmergencyWriter;
+import java.util.Map.Entry;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class GoogleAnalyzer implements Analyzer {
     private final int timeOut = 15_000;
@@ -17,9 +16,33 @@ public class GoogleAnalyzer implements Analyzer {
         searchEngine = new GoogleSearchEngine();
     }
 
-    public Map<String, Boolean> analyze(Map<String, String> keysWithDomains) {
+    public List<Map.Entry<String, String>> getThatIndexed(List<Map.Entry<String, String>> listTextsWithDomains) {
 
-        Map<String, Boolean> resultOfAnalyze = new HashMap<>();
+        List<Map.Entry<String, String>> listResult = new ArrayList<>();
+
+        for(Entry<String, String> entryTextWithDomain : listTextsWithDomains) {
+
+            System.out.println("Entry is scanning: " + entryTextWithDomain.getKey() + " " + entryTextWithDomain.getValue());
+
+            boolean isTextIndexed = searchEngine.search(entryTextWithDomain);
+            if(!isTextIndexed) {
+                listResult.add(entryTextWithDomain);
+            }
+
+            EmergencyWriter emergencyWriter = new EmergencyWriter();
+            emergencyWriter.writeTexts(null, listResult);
+
+            try {
+                Thread.sleep(timeOut);
+            } catch(InterruptedException ex) {
+                System.out.println(this.getClass());
+                ex.printStackTrace();
+            }
+        }
+
+
+
+/*        Map<String, Boolean> resultOfAnalyze = new HashMap<>();
 
         Set<Map.Entry<String, String>> entrySetKeysDomains = keysWithDomains.entrySet();
         for(Map.Entry<String, String> entry : entrySetKeysDomains) {
@@ -39,9 +62,9 @@ public class GoogleAnalyzer implements Analyzer {
                 System.out.println(this.getClass());
                 ex.printStackTrace();
             }
-        }
+        }*/
 
-        return resultOfAnalyze;
+        return listResult;
     }
 
 }

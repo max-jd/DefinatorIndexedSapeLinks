@@ -9,7 +9,8 @@ import com.gmailAtpavlinichm.maxim.search.text.Writer;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class Starter {
     public static void main(String args[]) {
@@ -26,13 +27,13 @@ public class Starter {
     public void run(Path pathFrom, Path resultPathTo) {
 
         TextReader textReader = new TextReader();
-        Map<String, String> seoTexts = textReader.readTexts(pathFrom);
+        List<Entry<String, String>> listSeoTexts = textReader.readTexts(pathFrom);
 
         Parser parser = new Parser();
-        Map<String, String> ordinaryTexts = parser.parseListSeoTexts(seoTexts);
+        List<Entry<String, String>> ordinaryTextsWithDomains = parser.parseListSeoTexts(listSeoTexts);
 
         Analyzer analyzer = new GoogleAnalyzer();
-        Map<String, Boolean> analyzedTexts = analyzer.analyze(ordinaryTexts);
+        List<Entry<String, String>> analyzedTexts = analyzer.getThatIndexed(ordinaryTextsWithDomains);
 
         Writer textWriter = new TextWriter();
         textWriter.writeTexts(resultPathTo, analyzedTexts);

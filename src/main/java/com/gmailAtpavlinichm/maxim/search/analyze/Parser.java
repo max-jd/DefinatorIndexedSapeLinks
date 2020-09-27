@@ -1,27 +1,31 @@
 package com.gmailAtpavlinichm.maxim.search.analyze;
 
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.AbstractMap.SimpleEntry;
 
 public class Parser {
-    public Map<String, String> parseListSeoTexts(Map<String, String> textsWithDomains) {
-        Map<String,String> parsedTextsWithDomains = new HashMap<>();
-        Set<Map.Entry<String, String>> setTexts = textsWithDomains.entrySet();
+    public List<Entry<String, String>> parseListSeoTexts(List<Entry<String, String>> listTextsWithDomains) {
 
-        for(Map.Entry<String, String> entry : setTexts) {
-           String seoText = entry.getKey();
-           String parsedText = parse(seoText);
-           parsedTextsWithDomains.put(parsedText, entry.getValue());
+        List<Entry<String, String>> parsedTextsWithDomains = new ArrayList<>();
+
+        for(Entry<String, String> entryTextWithDomain : listTextsWithDomains) {
+            Entry<String, String> copyOfEntry = parse(entryTextWithDomain);
+            parsedTextsWithDomains.add(copyOfEntry);
         }
 
         return parsedTextsWithDomains;
     }
 
-    private String parse(String seoText) {
+    private Entry<String, String> parse(Entry<String, String> entrySeoTextWithDomain) {
         //Вот тут продаются #a#маски для лица#/a# на американском сайте.
-       seoText = seoText.replace("#a#", "");
-        seoText = seoText.replace("#/a#", "");
-       seoText = "\"" + seoText + "\"";
+        // Твоему мужу понравится этот #a#набор галстук запонки и платок#/a#.
+        String keyText = entrySeoTextWithDomain.getKey();
+        keyText = keyText.replace("#a#", "");
+        keyText = keyText.replace("#/a#", "");
+        keyText = "\"" + keyText + "\"";
 
-       return seoText;
+        Entry<String, String> newEntry = new SimpleEntry<>(keyText, entrySeoTextWithDomain.getValue());
+        return newEntry;
     }
 }

@@ -5,22 +5,22 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class TextWriter implements Writer {
 
-    public void writeTexts(Path pathToWrite, Map<String, Boolean> textsToWrite) {
+    public void writeTexts(Path pathToWrite, List<Map.Entry<String, String>> textsWithDomainsToWrite) {
 
         try(BufferedWriter bufferedWriter = Files.newBufferedWriter(pathToWrite)) {
 
-            Set<Map.Entry<String, Boolean>> setEntryTextsToWrite = textsToWrite.entrySet();
-            for(Map.Entry<String, Boolean> entry : setEntryTextsToWrite) {
-                //if a link is not in index of a search engine we write this text with an anchor
-                if(!entry.getValue()) {
-                    bufferedWriter.write(entry.getKey());
+            for(Map.Entry<String, String> entryTextWithDomain : textsWithDomainsToWrite) {
+
+                    String text = entryTextWithDomain.getKey();
+                    String domain = entryTextWithDomain.getValue();
+                    bufferedWriter.write(text + " " + domain);
                     bufferedWriter.newLine();
-                }
+
             }
 
         } catch(IOException ex) {

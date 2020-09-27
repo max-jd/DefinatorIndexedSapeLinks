@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class TextReader implements Reader{
-    public Map<String, String> readTexts(Path pathTxtFile) {
+    public List<Map.Entry<String, String>> readTexts(Path pathTxtFile) {
 
-        Map<String, String> resultTexts = new HashMap<>();
+        List<Map.Entry<String, String>> resultListTexts = new ArrayList<>();
 
         try(BufferedReader bufferedReader = Files.newBufferedReader(pathTxtFile, Charset.forName("UTF-8"))) {
 
@@ -22,17 +25,17 @@ public class TextReader implements Reader{
 
                 //if there is garbage that we got by copy past and Excel-effect
                 newLine = newLine.replace("\uFEFF", "");
-                System.out.println(newLine);
                 int indexOfDomain = newLine.indexOf("\t");
 
                 if (indexOfDomain < 0) {
-                    throw new RuntimeException("It's not a domain with http(s)");
+                    throw new RuntimeException("Copied was not from an Excel-table.");
                 }
 
                 // excluding \t
                 String seoText = newLine.substring(0, indexOfDomain);
                 String domain = newLine.substring(indexOfDomain + 1, newLine.length());
-                resultTexts.put(seoText, domain);
+                Entry<String, String> newEntry = new SimpleEntry<>(seoText, domain);
+                resultListTexts.add(newEntry);
             }
 
         } catch(IOException ex) {
@@ -40,7 +43,7 @@ public class TextReader implements Reader{
             ex.printStackTrace();
         }
 
-        return resultTexts;
+        return resultListTexts;
 
     }
 }
